@@ -13,7 +13,10 @@ class StudentController extends Controller
     {
         $students = Student::all();
 
-        return  response()->json($students,200);
+        return  response()->json([
+            'status'   => 200,
+            'students' => $students
+        ]);
     }
 
 
@@ -29,8 +32,7 @@ class StudentController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                'success' => false,
-                'message' => $validator->getMessageBag()
+                'validation_error' => $validator->errors()
             ]);
 
         }else{
@@ -44,12 +46,12 @@ class StudentController extends Controller
 
             if ($student->save()) {
                 return response()->json([
-                    'success' => true,
+                    'status' => 200,
                     'message' => 'Student saved successfully'
                 ]);
             }else{
                 return response()->json([
-                    'success' => false,
+                    'status' => 200,
                     'message' => 'Student save failed'
                 ]);
             }
@@ -62,7 +64,10 @@ class StudentController extends Controller
     public function show(Student $student,$id)
     {
         $student = Student::findOrFail($id);
-        return response()->json($student,200);
+        return response()->json([
+            'status'  => 200,
+            'student' => $student
+        ]);
     }
 
 
@@ -70,7 +75,10 @@ class StudentController extends Controller
     public function edit(Student $student,$id)
     {
         $student = Student::findOrFail($id);
-        return response()->json($student,200);
+        return response()->json([
+            'status'  => 200,
+            'student' => $student
+        ]);
     }
 
     //Update student info
@@ -87,8 +95,7 @@ class StudentController extends Controller
         if ($validator->fails()) {
 
             return response()->json([
-                'success' => false,
-                'message' => $validator->getMessageBag()
+                'validation_error' => $validator->errors()
             ]);
 
         }else{
@@ -102,12 +109,12 @@ class StudentController extends Controller
 
             if ($student->save()) {
                 return response()->json([
-                    'success' => true,
+                    'status' => 200,
                     'message' => 'Student updated successfully'
                 ]);
             }else{
                 return response()->json([
-                    'success' => false,
+                    'status' => 404,
                     'message' => 'Student update failed'
                 ]);
             }
@@ -123,7 +130,7 @@ class StudentController extends Controller
 
 
         return response()->json([
-            'success' => true,
+            'status' => 200,
             'message' => 'Student deleted successfully'
         ]);
 

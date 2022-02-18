@@ -13,7 +13,7 @@ class InfoData extends Component {
 
     getData=()=>{
         axios.get('/api/student').then((response)=>{
-            let infos = response.data;
+            let infos = response.data.students;
             this.setState({students: infos})
         }).catch((error)=>{
             console.log(error);
@@ -32,7 +32,7 @@ class InfoData extends Component {
 
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
-                confirmButton: 'btn btn-success me-3',
+                confirmButton: 'btn btn-success',
                 cancelButton: 'btn btn-danger'
             },
             buttonsStyling: false

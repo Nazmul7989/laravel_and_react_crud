@@ -10,7 +10,8 @@ class AddInfo extends Component {
         this.state={
             name: '',
             age: '',
-            class: ''
+            class: '',
+            error_list: []
         }
     }
 
@@ -23,35 +24,51 @@ class AddInfo extends Component {
 
     }
 
-    submitHandler=(e)=>{
+    submitHandler= async (e)=>{
         e.preventDefault();
 
-        axios.post('/api/student/store',this.state).then((response)=>{
+         const  res = await axios.post('/api/student/store',this.state);
 
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            })
+         if (res.data.status === 200) {
 
-            Toast.fire({
-                icon: 'success',
-                title: 'Student Added Successfully'
-            })
+             // console.log(response.data.validation_error)
 
-           this.props.history.push('/home');
+             const Toast = Swal.mixin({
+                 toast: true,
+                 position: 'top-end',
+                 showConfirmButton: false,
+                 timer: 3000,
+                 timerProgressBar: true,
+                 didOpen: (toast) => {
+                     toast.addEventListener('mouseenter', Swal.stopTimer)
+                     toast.addEventListener('mouseleave', Swal.resumeTimer)
+                 }
+             })
+
+             Toast.fire({
+                 icon: 'success',
+                 title: 'Student Added Successfully'
+             })
+
+             this.setState({
+                 name: '',
+                 age: '',
+                 class: ''
+             })
+
+             this.props.history.push('/home');
+
+         } else {
+             this.setState({
+                 error_list: res.data.validation_error
+             })
+
+         }
 
 
 
-        }).catch((error)=>{
-            console.log(error);
-        })
+
+
 
     }
 
@@ -74,17 +91,20 @@ class AddInfo extends Component {
 
                                         <div className="col-12">
                                             <div className="form-group mb-3">
-                                                <input type="text" name="name" onChange={this.onChangeHandler} value={this.state.name} id="name" className="form-control" placeholder="You Name"/>
+                                                <input type="text" name="name" onChange={this.onChangeHandler} value={this.state.name} id="name" className="form-control" placeholder="Your Name"/>
+                                                <span className="text-danger">{this.state.error_list.name}</span>
                                             </div>
                                         </div>
                                         <div className="col-12">
                                             <div className="form-group mb-3">
-                                                <input type="text" name="age" id="age" onChange={this.onChangeHandler} value={this.state.age} className="form-control" placeholder="You Age"/>
+                                                <input type="text" name="age" id="age" onChange={this.onChangeHandler} value={this.state.age} className="form-control" placeholder="Your Age"/>
+                                                <span className="text-danger">{this.state.error_list.age}</span>
                                             </div>
                                         </div>
                                         <div className="col-12">
                                             <div className="form-group mb-3">
-                                                <input type="text" name="class" id="class" onChange={this.onChangeHandler} value={this.state.class} className="form-control" placeholder="You Class"/>
+                                                <input type="text" name="class" id="class" onChange={this.onChangeHandler} value={this.state.class} className="form-control" placeholder="Your Class"/>
+                                                <span className="text-danger">{this.state.error_list.class}</span>
                                             </div>
                                         </div>
                                         <div className="col-12">
