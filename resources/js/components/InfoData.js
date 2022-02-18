@@ -1,4 +1,7 @@
 import React, {Component, Fragment} from 'react';
+import {Link} from "react-router-dom";
+import Swal from "sweetalert2";
+
 
 class InfoData extends Component {
     constructor() {
@@ -8,13 +11,69 @@ class InfoData extends Component {
         }
     }
 
-    componentDidMount() {
+    getData=()=>{
         axios.get('/api/student').then((response)=>{
             let infos = response.data;
             this.setState({students: infos})
         }).catch((error)=>{
             console.log(error);
         })
+    }
+
+    componentDidMount() {
+        this.getData();
+    }
+
+    DeleteStudent=(e,id)=>{
+        e.preventDefault();
+
+        const currenTargetButton = e.currentTarget;
+
+
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success me-3',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false
+        })
+
+        swalWithBootstrapButtons.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                axios.delete('/api/student/delete/'+id).then((response)=>{
+
+                    currenTargetButton.closest('tr').remove();
+
+                }).catch((error)=>{
+                    console.log(error);
+                })
+
+                swalWithBootstrapButtons.fire(
+                    'Deleted!',
+                    'Student Info Deleted Successfully.',
+                    'success'
+                )
+            } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                swalWithBootstrapButtons.fire(
+                    'Cancelled',
+                    'Your imaginary file is safe :)',
+                    'error'
+                )
+            }
+        })
+
     }
 
     render() {
@@ -27,8 +86,8 @@ class InfoData extends Component {
                 <td>{student.age}</td>
                 <td>{student.class }</td>
                 <td>
-                    <button className="btn btn-success btn-sm ms">Edit</button>
-                    <button className="btn btn-danger btn-sm ms-2">Delete</button>
+                    <Link to={`/editInfo/${student.id}`}><button className="btn btn-success btn-sm ms">Edit</button></Link>
+                    <button onClick={(e)=>this.DeleteStudent(e,student.id)} className="btn btn-danger btn-sm ms-2">Delete</button>
                 </td>
             </tr>
         });
@@ -37,17 +96,22 @@ class InfoData extends Component {
 
             <Fragment>
                 <div className="col-8">
-                    <h4 className="text-center">Students Information</h4>
+                    <div className="clearfix">
+                        <h4 className="float-start">Students Information</h4>
+                        <Link to="/addInfo">
+                            <button className="float-end btn btn-sm btn-success">Add new</button>
+                        </Link>
+                    </div>
 
                     <table className="table table-bordered">
                         <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Name</th>
-                            <th>Age</th>
-                            <th>Class</th>
-                            <th>Action</th>
-                        </tr>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Class</th>
+                                <th>Action</th>
+                            </tr>
                         </thead>
                         <tbody>
                         {studentData}

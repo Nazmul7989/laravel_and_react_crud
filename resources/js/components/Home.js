@@ -1,5 +1,4 @@
 import React, {Component, Fragment} from 'react';
-import AddInfo from "./AddInfo";
 import InfoData from "./InfoData";
 
 class Home extends Component {
@@ -7,10 +6,8 @@ class Home extends Component {
         return (
             <Fragment>
                <div className="container">
-                   <div className="row">
-
+                   <div className="row d-flex justify-content-center">
                       <InfoData/>
-                      <AddInfo/>
 
                    </div>
                </div>
