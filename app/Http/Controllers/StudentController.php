@@ -20,37 +20,113 @@ class StudentController extends Controller
     //Store student info
     public function store(Request $request)
     {
-        $student = new Student();
+        $validator = Validator::make($request->all(),[
+            'name' => 'required',
+            'age' => 'required',
+            'class' => 'required',
+        ]);
 
-        $student->name  = $request->name;
-        $student->age   = $request->age;
-        $student->class = $request->class;
-        $student->save();
+        if ($validator->fails()) {
 
-        if ($student->save()) {
-            return response()->json('message', 'Student saved successfully');
+            return response()->json([
+                'success' => false,
+                'message' => $validator->getMessageBag()
+            ]);
+
         }else{
-            return response()->json('message', 'Student saved failed');
+
+            $student = new Student();
+
+            $student->name  = $request->name;
+            $student->age   = $request->age;
+            $student->class = $request->class;
+            $student->save();
+
+            if ($student->save()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Student saved successfully'
+                ]);
+            }else{
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Student save failed'
+                ]);
+            }
         }
 
+
+    }
+
+    //Fetch single student info
+    public function show(Student $student,$id)
+    {
+        $student = Student::findOrFail($id);
+        return response()->json($student,200);
     }
 
 
     //Edit student info
-    public function edit(Student $student)
+    public function edit(Student $student,$id)
     {
-        //
+        $student = Student::findOrFail($id);
+        return response()->json($student,200);
     }
 
     //Update student info
-    public function update(Request $request, Student $student)
+    public function update(Request $request, $id)
     {
-        //
+
+
+        $validator = Validator::make($request->all(),[
+            'name' => 'required',
+            'age' => 'required',
+            'class' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $validator->getMessageBag()
+            ]);
+
+        }else{
+
+            $student = Student::findOrFail($id);
+
+            $student->name  = $request->name;
+            $student->age   = $request->age;
+            $student->class = $request->class;
+            $student->save();
+
+            if ($student->save()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Student updated successfully'
+                ]);
+            }else{
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Student update failed'
+                ]);
+            }
+        }
     }
 
     //Delete student info
-    public function destroy(Student $student)
+    public function destroy(Student $student,$id)
     {
-        //
+        $student = Student::findOrFail($id);
+
+        $student->delete();
+
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Student deleted successfully'
+        ]);
+
+
     }
 }
