@@ -51,7 +51,7 @@ class StudentController extends Controller
                 ]);
             }else{
                 return response()->json([
-                    'status' => 200,
+                    'status' => 404,
                     'message' => 'Student save failed'
                 ]);
             }
